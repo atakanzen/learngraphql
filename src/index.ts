@@ -1,9 +1,11 @@
 import { ApolloServer } from "apollo-server";
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+// import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { context } from "./context";
 import { schema } from "./utils/schema";
 
 export const server = new ApolloServer({
   schema,
+  context,
   // Offline Apollo Editor
   // plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });

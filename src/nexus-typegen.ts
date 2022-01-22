@@ -4,7 +4,7 @@
  */
 
 
-
+import type { Context } from "./context"
 
 
 
@@ -30,7 +30,7 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Link: { // root type
     description: string; // String!
-    id: string; // ID!
+    id: number; // Int!
     url: string; // String!
   }
   Mutation: {};
@@ -50,29 +50,33 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 export interface NexusGenFieldTypes {
   Link: { // field return type
     description: string; // String!
-    id: string; // ID!
+    id: number; // Int!
     url: string; // String!
   }
   Mutation: { // field return type
     delete: NexusGenRootTypes['Link']; // Link!
     post: NexusGenRootTypes['Link']; // Link!
+    update: NexusGenRootTypes['Link']; // Link!
   }
   Query: { // field return type
-    links: NexusGenRootTypes['Link'][] | null; // [Link!]
+    link: NexusGenRootTypes['Link'] | null; // Link
+    links: NexusGenRootTypes['Link'][]; // [Link!]!
   }
 }
 
 export interface NexusGenFieldTypeNames {
   Link: { // field return type name
     description: 'String'
-    id: 'ID'
+    id: 'Int'
     url: 'String'
   }
   Mutation: { // field return type name
     delete: 'Link'
     post: 'Link'
+    update: 'Link'
   }
   Query: { // field return type name
+    link: 'Link'
     links: 'Link'
   }
 }
@@ -80,11 +84,21 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Mutation: {
     delete: { // args
-      id: string; // ID!
+      id: number; // Int!
     }
     post: { // args
       description: string; // String!
       url: string; // String!
+    }
+    update: { // args
+      description: string; // String!
+      id: number; // Int!
+      url: string; // String!
+    }
+  }
+  Query: {
+    link: { // args
+      id: number; // Int!
     }
   }
 }
@@ -120,7 +134,7 @@ export type NexusGenFeaturesConfig = {
 }
 
 export interface NexusGenTypes {
-  context: any;
+  context: Context;
   inputTypes: NexusGenInputs;
   rootTypes: NexusGenRootTypes;
   inputTypeShapes: NexusGenInputs & NexusGenEnums & NexusGenScalars;

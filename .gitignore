@@ -1,4 +1,12 @@
+# MISC
 .DS_Store
+
+# PACKAGE
+*lock.json
 node_modules
 
-*lock.json
+# ENV
+.env
+
+# DATA
+*.db
