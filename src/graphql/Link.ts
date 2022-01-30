@@ -11,10 +11,19 @@ import { NexusGenObjects } from "../nexus-typegen";
 
 export const Link = objectType({
   name: "Link",
+  description: "An object representation of a link.",
   definition(t) {
     t.nonNull.int("id");
     t.nonNull.string("description");
     t.nonNull.string("url");
+    t.field("postedBy", {
+      type: "User",
+      resolve(source, args, context) {
+        return context.prisma.link
+          .findUnique({ where: { id: source.id } })
+          .postedBy();
+      },
+    });
   },
 });
 
@@ -23,6 +32,7 @@ export const LinkQuery = extendType({
   definition(t) {
     t.nonNull.list.nonNull.field("links", {
       type: Link,
+      description: "Returns all links",
       resolve(parent, args, { prisma }, info) {
         return prisma.link.findMany();
       },
@@ -30,6 +40,7 @@ export const LinkQuery = extendType({
 
     t.nullable.field("link", {
       type: "Link",
+      description: "Returns the link with the specified `id` argument",
       args: {
         id: nonNull(intArg()),
       },
@@ -49,6 +60,7 @@ export const LinkMutation = extendType({
   definition(t) {
     t.nonNull.field("post", {
       type: "Link",
+      description: "Creates a link with the given arguments",
       args: {
         description: nonNull(stringArg()),
         url: nonNull(stringArg()),
@@ -60,6 +72,7 @@ export const LinkMutation = extendType({
 
     t.nonNull.field("update", {
       type: "Link",
+      description: "Updates a link with the given arguments",
       args: {
         id: nonNull(intArg({ description: "The ID of the link" })),
         url: nonNull(stringArg({ description: "The URL of the link" })),
@@ -77,6 +90,7 @@ export const LinkMutation = extendType({
 
     t.nonNull.field("delete", {
       type: "Link",
+      description: "Deletes a link with the given `id`",
       args: {
         id: nonNull(intArg()),
       },

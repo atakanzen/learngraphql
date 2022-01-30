@@ -2,15 +2,49 @@
 ### Do not make changes to this file directly
 
 
+"""An object representation of an authentication payload"""
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+"""An object representation of a link."""
 type Link {
   description: String!
   id: Int!
+  postedBy: User
   url: String!
 }
 
 type Mutation {
+  """Deletes a link with the given `id`"""
   delete(id: Int!): Link!
+
+  """Logs in a user with the given arguments"""
+  login(
+    """User email"""
+    email: String!
+
+    """User password"""
+    password: String!
+  ): AuthPayload!
+
+  """Creates a link with the given arguments"""
   post(description: String!, url: String!): Link!
+
+  """Signs up a new user with the given arguments"""
+  signup(
+    """User email"""
+    email: String!
+
+    """User name"""
+    name: String!
+
+    """User password"""
+    password: String!
+  ): AuthPayload!
+
+  """Updates a link with the given arguments"""
   update(
     """The description of the link"""
     description: String!
@@ -24,6 +58,17 @@ type Mutation {
 }
 
 type Query {
+  """Returns the link with the specified `id` argument"""
   link(id: Int!): Link
+
+  """Returns all links"""
   links: [Link!]!
+}
+
+"""An object representation of a User"""
+type User {
+  email: String!
+  id: String!
+  links: [Link!]!
+  name: String!
 }

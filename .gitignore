@@ -2,7 +2,6 @@
 .DS_Store
 
 # PACKAGE
-*lock.json
 node_modules
 
 # ENV
@@ -10,3 +9,4 @@ node_modules
 
 # DATA
 *.db
+*db-journal

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { ApolloServer } from "apollo-server";
 // import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { context } from "./context";
