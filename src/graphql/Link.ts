@@ -65,8 +65,16 @@ export const LinkMutation = extendType({
         description: nonNull(stringArg()),
         url: nonNull(stringArg()),
       },
-      resolve(parent, { description, url }, { prisma }) {
-        return prisma.link.create({ data: { description, url } });
+      resolve(parent, { description, url }, { prisma, userId }) {
+        if (!userId) {
+          throw new Error("Cannot create link without logging in");
+        }
+
+        const newLink = prisma.link.create({
+          data: { description, url, postedBy: { connect: { id: userId } } },
+        });
+
+        return newLink;
       },
     });
 
