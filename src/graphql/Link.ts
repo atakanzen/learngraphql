@@ -1,12 +1,4 @@
-import {
-  extendType,
-  idArg,
-  intArg,
-  nonNull,
-  nullable,
-  objectType,
-  stringArg,
-} from "nexus";
+import { extendType, intArg, nonNull, objectType, stringArg } from "nexus";
 import { NexusGenObjects } from "../nexus-typegen";
 
 export const Link = objectType({
@@ -16,12 +8,19 @@ export const Link = objectType({
     t.nonNull.int("id");
     t.nonNull.string("description");
     t.nonNull.string("url");
+    t.nonNull.dateTime("createdAt");
     t.field("postedBy", {
       type: "User",
       resolve(source, args, context) {
         return context.prisma.link
           .findUnique({ where: { id: source.id } })
           .postedBy();
+      },
+    });
+    t.nonNull.list.nonNull.field("voters", {
+      type: "User",
+      resolve(source, args, { prisma }) {
+        return prisma.link.findUnique({ where: { id: source.id } }).voters();
       },
     });
   },
@@ -116,15 +115,18 @@ let links: NexusGenObjects["Link"][] = [
     id: 1,
     url: "https://atakanzen.com",
     description: "Landing page of Atakan Zengin.",
+    createdAt: null,
   },
   {
     id: 2,
     url: "https://github.com/atakanzen",
     description: "Github page of Atakan Zengin.",
+    createdAt: null,
   },
   {
     id: 3,
     url: "https://bit.ly/3rCI5lW",
     description: "Somewhere special.",
+    createdAt: null,
   },
 ];

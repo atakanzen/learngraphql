@@ -5,8 +5,23 @@
 
 
 import type { Context } from "./context"
-
-
+import type { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "Date";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    dateTime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+  }
+}
 
 
 declare global {
@@ -25,6 +40,7 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  Date: any
 }
 
 export interface NexusGenObjects {
@@ -33,6 +49,7 @@ export interface NexusGenObjects {
     user: NexusGenRootTypes['User']; // User!
   }
   Link: { // root type
+    createdAt: NexusGenScalars['Date']; // Date!
     description: string; // String!
     id: number; // Int!
     url: string; // String!
@@ -43,6 +60,10 @@ export interface NexusGenObjects {
     email: string; // String!
     id: string; // String!
     name: string; // String!
+  }
+  Vote: { // root type
+    link: NexusGenRootTypes['Link']; // Link!
+    user: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -62,10 +83,12 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Link: { // field return type
+    createdAt: NexusGenScalars['Date']; // Date!
     description: string; // String!
     id: number; // Int!
     postedBy: NexusGenRootTypes['User'] | null; // User
     url: string; // String!
+    voters: NexusGenRootTypes['User'][]; // [User!]!
   }
   Mutation: { // field return type
     delete: NexusGenRootTypes['Link']; // Link!
@@ -73,6 +96,7 @@ export interface NexusGenFieldTypes {
     post: NexusGenRootTypes['Link']; // Link!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     update: NexusGenRootTypes['Link']; // Link!
+    vote: NexusGenRootTypes['Vote'] | null; // Vote
   }
   Query: { // field return type
     link: NexusGenRootTypes['Link'] | null; // Link
@@ -83,6 +107,11 @@ export interface NexusGenFieldTypes {
     id: string; // String!
     links: NexusGenRootTypes['Link'][]; // [Link!]!
     name: string; // String!
+    votes: NexusGenRootTypes['Link'][]; // [Link!]!
+  }
+  Vote: { // field return type
+    link: NexusGenRootTypes['Link']; // Link!
+    user: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -92,10 +121,12 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Link: { // field return type name
+    createdAt: 'Date'
     description: 'String'
     id: 'Int'
     postedBy: 'User'
     url: 'String'
+    voters: 'User'
   }
   Mutation: { // field return type name
     delete: 'Link'
@@ -103,6 +134,7 @@ export interface NexusGenFieldTypeNames {
     post: 'Link'
     signup: 'AuthPayload'
     update: 'Link'
+    vote: 'Vote'
   }
   Query: { // field return type name
     link: 'Link'
@@ -113,6 +145,11 @@ export interface NexusGenFieldTypeNames {
     id: 'String'
     links: 'Link'
     name: 'String'
+    votes: 'Link'
+  }
+  Vote: { // field return type name
+    link: 'Link'
+    user: 'User'
   }
 }
 
@@ -138,6 +175,9 @@ export interface NexusGenArgTypes {
       description: string; // String!
       id: number; // Int!
       url: string; // String!
+    }
+    vote: { // args
+      linkId: number; // Int!
     }
   }
   Query: {
