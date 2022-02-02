@@ -1,2 +1,2 @@
 # learngraphql
-Learning GraphQL with Apollo Server and Nexus.  
+Learned GraphQL + Apollo Server + Nexus + Prisma.  
