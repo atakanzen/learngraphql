@@ -1,5 +1,30 @@
-import { extendType, intArg, nonNull, objectType, stringArg } from "nexus";
+import { Prisma } from "@prisma/client";
+import {
+  arg,
+  enumType,
+  extendType,
+  inputObjectType,
+  intArg,
+  list,
+  nonNull,
+  objectType,
+  stringArg,
+} from "nexus";
 import { NexusGenObjects } from "../nexus-typegen";
+
+export const LinkOrderByInput = inputObjectType({
+  name: "LinkOrderByInput",
+  definition(t) {
+    t.field("description", { type: Sort });
+    t.field("url", { type: Sort });
+    t.field("createdAt", { type: Sort });
+  },
+});
+
+export const Sort = enumType({
+  name: "Sort",
+  members: ["asc", "desc"],
+});
 
 export const Link = objectType({
   name: "Link",
@@ -26,14 +51,51 @@ export const Link = objectType({
   },
 });
 
+export const Feed = objectType({
+  name: "Feed",
+  definition(t) {
+    t.nonNull.list.nonNull.field("links", { type: "Link" });
+    t.nonNull.int("count");
+  },
+});
+
 export const LinkQuery = extendType({
   type: "Query",
   definition(t) {
-    t.nonNull.list.nonNull.field("links", {
-      type: Link,
+    t.nonNull.field("feed", {
+      type: "Feed",
+      args: {
+        filter: stringArg({ description: "Filter for links" }),
+        skip: intArg(),
+        take: intArg(),
+        orderBy: arg({ type: list(nonNull(LinkOrderByInput)) }),
+      },
       description: "Returns all links",
-      resolve(parent, args, { prisma }, info) {
-        return prisma.link.findMany();
+      async resolve(source, { filter, skip, take, orderBy }, { prisma }) {
+        const where = filter
+          ? {
+              OR: [
+                { description: { contains: filter } },
+                { url: { contains: filter } },
+              ],
+            }
+          : {};
+
+        const links = await prisma.link.findMany({
+          where,
+          skip: skip as number | undefined,
+          take: take as number | undefined,
+          orderBy: orderBy as
+            | Prisma.Enumerable<Prisma.LinkOrderByWithRelationInput>
+            | undefined,
+        });
+
+        const count = await prisma.link.count({ where });
+
+        return {
+          links,
+          count,
+        };
       },
     });
 
@@ -43,7 +105,7 @@ export const LinkQuery = extendType({
       args: {
         id: nonNull(intArg()),
       },
-      resolve(parent, { id }, { prisma }) {
+      resolve(source, { id }, { prisma }) {
         return prisma.link.findUnique({
           where: {
             id,
@@ -64,7 +126,7 @@ export const LinkMutation = extendType({
         description: nonNull(stringArg()),
         url: nonNull(stringArg()),
       },
-      resolve(parent, { description, url }, { prisma, userId }) {
+      resolve(source, { description, url }, { prisma, userId }) {
         if (!userId) {
           throw new Error("Cannot create link without logging in");
         }
@@ -101,7 +163,7 @@ export const LinkMutation = extendType({
       args: {
         id: nonNull(intArg()),
       },
-      resolve(parent, { id }, { prisma }) {
+      resolve(source, { id }, { prisma }) {
         return prisma.link.delete({ where: { id } });
       },
     });

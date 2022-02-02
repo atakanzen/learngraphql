@@ -13,6 +13,11 @@ A date string, such as 2007-12-03, compliant with the `full-date` format outline
 """
 scalar Date
 
+type Feed {
+  count: Int!
+  links: [Link!]!
+}
+
 """An object representation of a link."""
 type Link {
   createdAt: Date!
@@ -21,6 +26,12 @@ type Link {
   postedBy: User
   url: String!
   voters: [User!]!
+}
+
+input LinkOrderByInput {
+  createdAt: Sort
+  description: Sort
+  url: Sort
 }
 
 type Mutation {
@@ -69,11 +80,22 @@ type Mutation {
 }
 
 type Query {
+  """Returns all links"""
+  feed(
+    """Filter for links"""
+    filter: String
+    orderBy: [LinkOrderByInput!]
+    skip: Int
+    take: Int
+  ): Feed!
+
   """Returns the link with the specified `id` argument"""
   link(id: Int!): Link
+}
 
-  """Returns all links"""
-  links: [Link!]!
+enum Sort {
+  asc
+  desc
 }
 
 """An object representation of a User"""

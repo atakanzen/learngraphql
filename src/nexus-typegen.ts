@@ -29,9 +29,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  LinkOrderByInput: { // input type
+    createdAt?: NexusGenEnums['Sort'] | null; // Sort
+    description?: NexusGenEnums['Sort'] | null; // Sort
+    url?: NexusGenEnums['Sort'] | null; // Sort
+  }
 }
 
 export interface NexusGenEnums {
+  Sort: "asc" | "desc"
 }
 
 export interface NexusGenScalars {
@@ -47,6 +53,10 @@ export interface NexusGenObjects {
   AuthPayload: { // root type
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
+  }
+  Feed: { // root type
+    count: number; // Int!
+    links: NexusGenRootTypes['Link'][]; // [Link!]!
   }
   Link: { // root type
     createdAt: NexusGenScalars['Date']; // Date!
@@ -75,12 +85,16 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
   AuthPayload: { // field return type
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
+  }
+  Feed: { // field return type
+    count: number; // Int!
+    links: NexusGenRootTypes['Link'][]; // [Link!]!
   }
   Link: { // field return type
     createdAt: NexusGenScalars['Date']; // Date!
@@ -99,8 +113,8 @@ export interface NexusGenFieldTypes {
     vote: NexusGenRootTypes['Vote'] | null; // Vote
   }
   Query: { // field return type
+    feed: NexusGenRootTypes['Feed']; // Feed!
     link: NexusGenRootTypes['Link'] | null; // Link
-    links: NexusGenRootTypes['Link'][]; // [Link!]!
   }
   User: { // field return type
     email: string; // String!
@@ -120,6 +134,10 @@ export interface NexusGenFieldTypeNames {
     token: 'String'
     user: 'User'
   }
+  Feed: { // field return type name
+    count: 'Int'
+    links: 'Link'
+  }
   Link: { // field return type name
     createdAt: 'Date'
     description: 'String'
@@ -137,8 +155,8 @@ export interface NexusGenFieldTypeNames {
     vote: 'Vote'
   }
   Query: { // field return type name
+    feed: 'Feed'
     link: 'Link'
-    links: 'Link'
   }
   User: { // field return type name
     email: 'String'
@@ -181,6 +199,12 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    feed: { // args
+      filter?: string | null; // String
+      orderBy?: NexusGenInputs['LinkOrderByInput'][] | null; // [LinkOrderByInput!]
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
     link: { // args
       id: number; // Int!
     }
@@ -195,9 +219,9 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 
